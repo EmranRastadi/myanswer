@@ -29,6 +29,8 @@ export const SliderAddBox = styled.div`
   border: 1px dashed #ccc;
 
   &.active {
+    margin-right: 0 !important;
+    padding-right: 0px;
     background: #bbdefb;
     color: #212121;
     cursor: not-allowed;
