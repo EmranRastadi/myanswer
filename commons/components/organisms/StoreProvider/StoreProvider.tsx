@@ -1,5 +1,4 @@
-import {useContext, useState, useEffect, createContext, useReducer} from "react";
-import {v4 as uuidv4} from 'uuid';
+import {createContext, useReducer} from "react";
 import types from "@utils/types";
 import Cookies from "js-cookie";
 

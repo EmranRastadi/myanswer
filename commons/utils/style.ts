@@ -39,3 +39,29 @@ export const RoundedIcon = styled.div`
     opacity: 0.4;
   }
 `;
+
+export const SlideImg = styled.div`
+  height: 150px;
+  overflow: hidden;
+  background-image: url(${props => props.theme.background});
+  background-size: cover;
+  position: relative;
+  border-radius: 10px;
+  .slide-image{
+    width: 100%;
+    height: 100%;
+  }
+`;
+
+export const SlideTitle = styled.div`
+  width: 100%;
+  height: 40px;
+  background: rgba(0 0 0 / 70%);
+  color: #fff;
+  bottom: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 0px;
+  position: absolute;
+`;

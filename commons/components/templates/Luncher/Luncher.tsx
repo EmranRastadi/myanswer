@@ -25,9 +25,8 @@ export default function Luncher() {
     })
 
     Cookies.set("initialState" , JSON.stringify(banners));
+    // localStorage.setItem("initialState" , JSON.stringify(banners));
   }
-
-  console.log("ssss" , state)
   return (
     <Container>
       <Row dir={"rtl"}>
