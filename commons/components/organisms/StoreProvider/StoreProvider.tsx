@@ -1,7 +1,6 @@
 import {createContext, useReducer} from "react";
 import types from "@utils/types";
 import Cookies from "js-cookie";
-
 interface Banners {
   title: string,
   id: string
@@ -9,18 +8,13 @@ interface Banners {
 
 interface InitialStateS {
   banners: Banners[] | any
-
 }
-
 type Action = {
   type: string,
   payload: any
 }
-
 export const Store = createContext<any>('')
-
 let cookieData = Cookies.get('initialState') as any;
-
 let initialsBanner = cookieData ? JSON.parse(cookieData) : []
 
 const initialState = {

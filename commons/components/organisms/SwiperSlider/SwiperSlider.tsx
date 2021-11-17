@@ -1,41 +1,58 @@
-import {Swiper, SwiperSlide} from 'swiper/react';
-import 'swiper/css';
-import {PlusBox, SlideShow} from "@molecules/index";
 import {Row} from "react-bootstrap";
-import React, {ChangeEvent, useContext} from "react";
 import {Store} from "@organisms/StoreProvider/StoreProvider";
 import _ from 'lodash'
 import types from "@utils/types";
+import {Style} from "@utils/style";
 import Cookies from "js-cookie";
-import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
+import {v4 as uuid} from "uuid";
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import React, {useContext} from "react";
+import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
+import {PlusBox, SlideShow} from "@molecules/index";
 
-export default function SwiperSlider(props: any) {
+const grid = 8;
+const getItemStyle = (isDragging: any, draggableStyle: any) => ({
+  userSelect: "none",
+  borderRadius: '10px',
+  margin: `0 ${grid}px 0 0`,
+  background: isDragging ? "lightgreen" : "#fff",
+  ...draggableStyle
+});
+
+export interface Slide{
+  id : string,
+  name : string,
+  file : any
+}
+
+
+function SwiperSlider(props: any) {
   const {state, dispatch} = useContext(Store)
+  const getListStyle = (isDraggingOver: any, slidesLength: any) => ({
+    display: "flex",
+    width: (slidesLength * 155 + 10) + "px",
+  });
 
   const addSlide = (e: any) => {
-
     let banners = state.banners;
-
     let target = e.target.files[0];
-
     let banner = _.find(banners, (item) => {
       return item.id === props.id
     })
-
     let indexOf = banners.indexOf(banner);
-
     if (banner) {
       let alreadyExist = _.find(banner.slides, (slide) => {
         return slide.file === URL.createObjectURL(target);
       })
       if (!alreadyExist) {
         banner.slides.push({
+          id: uuid(),
           name: `اسلاید ${banner.slides.length + 1}`,
           file: URL.createObjectURL(target)
         })
-
+        let fitBannerSlides = _.reverse(banner.slides);
+        banner.slides = fitBannerSlides;
         banners[indexOf] = banner;
-
         dispatch({
           type: types.ADD_BANNER,
           payload: banners
@@ -47,71 +64,74 @@ export default function SwiperSlider(props: any) {
   }
 
   const onDragHandler = (result: any) => {
-
+    let banners = state.banners;
+    const {destination, source} = result
+    if (!destination) return;
+    let bannerDrop = _.find(banners, (i: any) => {
+      return i.id === source.droppableId
+    });
+    let indexOfBanner = banners.indexOf(bannerDrop);
+    let bannerCopy = [...bannerDrop.slides];
+    let [removed] = bannerCopy.splice(source.index, 1);
+    bannerCopy.splice(destination.index, 0, removed)
+    banners[indexOfBanner].slides = bannerCopy;
+    dispatch({
+      type: types.ADD_BANNER,
+      payload: banners
+    })
   }
 
-
   return (
+    <div style={{overflowY: 'hidden', overflowX: "auto", height: 200, direction: 'rtl', display: 'flex'}}>
+      <DragDropContext onDragEnd={onDragHandler}>
+        <PlusBox hasIcon={"none"} title={props.name}/>
 
-    <DragDropContext onDragEnd={onDragHandler}>
-
-      <Row style={{marginBottom: '20px'}}>
-        <Droppable droppableId={props.id}>
-          {(provided => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-            >
-              <Swiper
-                spaceBetween={50}
-                dir={"rtl"}
-                slidesPerView={3}
-                breakpoints={{
-                  "640": {
-                    "slidesPerView": 2,
-                    "spaceBetween": 20
-                  },
-                  "768": {
-                    "slidesPerView": 4,
-                    "spaceBetween": 40
-                  },
-                  "1024": {
-                    "slidesPerView": 5,
-                    "spaceBetween": 50
-                  }
-                }}
+        <div style={{direction: "ltr", float: 'right'}}>
+          <Droppable droppableId={props.id} direction="horizontal">
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                style={getListStyle(snapshot.isDraggingOver, props.slides?.length)}
+                {...provided.droppableProps}
               >
 
-                <SwiperSlide>
-                  <PlusBox hasIcon={"none"} title={props.name}/>
-                </SwiperSlide>
+                {props.slides.map((item: Slide, index: number) => {
+                  return (
+                    <Draggable key={item.id} draggableId={item.id} index={index}>
+                      {(provided, snapshot) => (
+                        <div>
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            style={getItemStyle(
+                              snapshot.isDragging,
+                              provided.draggableProps.style
+                            )}
+                          >
+                            <SlideShow bannerId={props.id} {...item}/>
+                          </div>
+                        </div>
+                      )}
+                    </Draggable>
+                  )
+                })}
 
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </div>
 
-                {props.slides?.length && props.slides.map((item: any, index: number) => (
-                  <Draggable draggableId={item.id} index={index} key={item.id}>
-                    {(providedDrag) => (
-                      <SwiperSlide key={index}>
-                        <SlideShow img={item.file} name={item.name}/>
-                      </SwiperSlide>
-                    )}
-
-                  </Draggable>
-
-                ))}
-                <SwiperSlide>
-                  <PlusBox file={true} onPickupFile={addSlide} title={"افزودن اسلاید"}/>
-                </SwiperSlide>
-              </Swiper>
-
-              {provided.placeholder}
-            </div>
-          ))}
-        </Droppable>
-
-      </Row>
-
-    </DragDropContext>
-
-
-  )
+        {props.slides.length === 5 ? (
+          <PlusBox file={true} disabled={true} title={"افزودن اسلاید"}/>
+        ) : (
+          <PlusBox file={true} onPickupFile={addSlide} title={"افزودن اسلاید"}/>
+          )}
+      </DragDropContext>
+    </div>
+  );
 }
+
+
+export default SwiperSlider
