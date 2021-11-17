@@ -5,7 +5,7 @@ import {PlusIcon} from "@atoms/index";
 interface Props {
   title: string,
   onClick?: Function,
-  onPickupFile?: (e: any) => void,
+  onPickupFile?: (e: React.ChangeEvent<HTMLInputElement>) => void,
   hasIcon?: string,
   file?: boolean,
   disabled?:boolean
@@ -18,7 +18,7 @@ export default function PlusBox(props: Props) {
       {props.disabled ? <Disabled /> : ''}
       {props.hasIcon === "none" ? '' : <PlusIcon/>}
       <h5>{props.title}</h5>
-      {props.file && !props.disabled ? <input className={"input-files"} onChange={e => props.onPickupFile ? props.onPickupFile(e) : null}
+      {props.file && !props.disabled ? <input className={"input-files"} onChange={(e) => props.onPickupFile ? props.onPickupFile(e) : null}
                            type={"file"}/> : ''}
     </SliderAddBox>
   )

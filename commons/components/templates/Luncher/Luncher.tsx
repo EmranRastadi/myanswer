@@ -6,6 +6,14 @@ import {useContext} from "react";
 import {Store} from "@organisms/StoreProvider/StoreProvider";
 import types from "@utils/types";
 import Cookies from "js-cookie";
+import {Slide} from "@organisms/SwiperSlider/SwiperSlider";
+
+export interface Banner{
+  name : string,
+  id : string,
+  slides : Slide[]
+}
+
 export default function Luncher() {
   const {state, dispatch} = useContext(Store);
   const addBanner = () => {
@@ -24,13 +32,13 @@ export default function Luncher() {
   }
   return (
     <Container style={{overflow : 'hidden' , padding : '100px 20px'}}>
-      <Row dir={"rtl"}>
+      <Row>
         <Col lg={2} md={4} xs={12} sm={2} style={{padding : 0}}>
           <PlusBox title={"افزودن بنر"} onClick={addBanner}/>
         </Col>
       </Row>
       <br/>
-      {state.banners.length ? state.banners.map((item: any, index: number) => (
+      {state.banners.length ? state.banners.map((item: Banner, index: number) => (
         <>
           <SwiperSlider {...item} key={index}/>
           <br/>

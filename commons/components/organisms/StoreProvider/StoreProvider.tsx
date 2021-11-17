@@ -1,13 +1,9 @@
 import {createContext, useReducer} from "react";
 import types from "@utils/types";
 import Cookies from "js-cookie";
-interface Banners {
-  title: string,
-  id: string
-}
-
+import {Banner} from "@templates/Luncher/Luncher";
 interface InitialStateS {
-  banners: Banners[] | any
+  banners: Banner[]
 }
 type Action = {
   type: string,

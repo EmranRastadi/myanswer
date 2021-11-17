@@ -1,15 +1,13 @@
-import {Row} from "react-bootstrap";
 import {Store} from "@organisms/StoreProvider/StoreProvider";
 import _ from 'lodash'
 import types from "@utils/types";
-import {Style} from "@utils/style";
 import Cookies from "js-cookie";
 import {v4 as uuid} from "uuid";
-import PerfectScrollbar from 'react-perfect-scrollbar';
+import {Style} from "@utils/style";
 import React, {useContext} from "react";
 import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 import {PlusBox, SlideShow} from "@molecules/index";
-
+import {Banner} from "@templates/Luncher/Luncher";
 const grid = 8;
 const getItemStyle = (isDragging: any, draggableStyle: any) => ({
   userSelect: "none",
@@ -18,22 +16,18 @@ const getItemStyle = (isDragging: any, draggableStyle: any) => ({
   background: isDragging ? "lightgreen" : "#fff",
   ...draggableStyle
 });
-
-export interface Slide{
-  id : string,
-  name : string,
-  file : any
+export interface Slide {
+  id: string,
+  name: string,
+  file: any
 }
-
-
 function SwiperSlider(props: any) {
   const {state, dispatch} = useContext(Store)
   const getListStyle = (isDraggingOver: any, slidesLength: any) => ({
     display: "flex",
     width: (slidesLength * 155 + 10) + "px",
   });
-
-  const addSlide = (e: any) => {
+  const addSlide = (e: React.ChangeEvent<any>) => {
     let banners = state.banners;
     let target = e.target.files[0];
     let banner = _.find(banners, (item) => {
@@ -62,12 +56,11 @@ function SwiperSlider(props: any) {
       }
     }
   }
-
   const onDragHandler = (result: any) => {
     let banners = state.banners;
     const {destination, source} = result
     if (!destination) return;
-    let bannerDrop = _.find(banners, (i: any) => {
+    let bannerDrop = _.find(banners, (i: Banner) => {
       return i.id === source.droppableId
     });
     let indexOfBanner = banners.indexOf(bannerDrop);
@@ -80,58 +73,60 @@ function SwiperSlider(props: any) {
       payload: banners
     })
   }
-
+  const  _renderAddSlide = () => {
+    if(props.slides.length === 5){
+      return (
+        <PlusBox file={true} disabled={true} title={"افزودن اسلاید"}/>
+      )
+    } else{
+      return (
+        <PlusBox file={true} onPickupFile={addSlide} title={"افزودن اسلاید"}/>
+      )
+    }
+  }
   return (
-    <div style={{overflowY: 'hidden', overflowX: "auto", height: 200, direction: 'rtl', display: 'flex'}}>
-      <DragDropContext onDragEnd={onDragHandler}>
-        <PlusBox hasIcon={"none"} title={props.name}/>
-
-        <div style={{direction: "ltr", float: 'right'}}>
-          <Droppable droppableId={props.id} direction="horizontal">
-            {(provided, snapshot) => (
-              <div
-                ref={provided.innerRef}
-                style={getListStyle(snapshot.isDraggingOver, props.slides?.length)}
-                {...provided.droppableProps}
-              >
-
-                {props.slides.map((item: Slide, index: number) => {
-                  return (
-                    <Draggable key={item.id} draggableId={item.id} index={index}>
-                      {(provided, snapshot) => (
-                        <div>
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            style={getItemStyle(
-                              snapshot.isDragging,
-                              provided.draggableProps.style
-                            )}
-                          >
-                            <SlideShow bannerId={props.id} {...item}/>
+    <Style>
+      <div className={"drag-container"}>
+        <DragDropContext onDragEnd={onDragHandler}>
+          <PlusBox hasIcon={"none"} title={props.name}/>
+          <div className={"drop-container"}>
+            <Droppable droppableId={props.id} direction="horizontal">
+              {(provided, snapshot) => (
+                <div
+                  ref={provided.innerRef}
+                  style={getListStyle(snapshot.isDraggingOver, props.slides?.length)}
+                  {...provided.droppableProps}
+                >
+                  {props.slides.map((item: Slide, index: number) => {
+                    return (
+                      <Draggable key={item.id} draggableId={item.id} index={index}>
+                        {(provided, snapshot) => (
+                          <div>
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              style={getItemStyle(
+                                snapshot.isDragging,
+                                provided.draggableProps.style
+                              )}
+                            >
+                              <SlideShow bannerId={props.id} {...item}/>
+                            </div>
                           </div>
-                        </div>
-                      )}
-                    </Draggable>
-                  )
-                })}
-
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </div>
-
-        {props.slides.length === 5 ? (
-          <PlusBox file={true} disabled={true} title={"افزودن اسلاید"}/>
-        ) : (
-          <PlusBox file={true} onPickupFile={addSlide} title={"افزودن اسلاید"}/>
-          )}
-      </DragDropContext>
-    </div>
+                        )}
+                      </Draggable>
+                    )
+                  })}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </div>
+          {_renderAddSlide()}
+        </DragDropContext>
+      </div>
+    </Style>
   );
 }
-
-
 export default SwiperSlider

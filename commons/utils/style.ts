@@ -14,6 +14,7 @@ export const Disabled = styled.div`
 export const SliderAddBox = styled.div`
   height: 150px;
   width: 150px;
+  row-gap: 15px;
   margin-left: 20px;
   display: flex;
   flex: none;
@@ -26,12 +27,14 @@ export const SliderAddBox = styled.div`
   color: #aaa;
   cursor: pointer;
   border: 1px dashed #ccc;
-  &.active{
-    background: #bbdefb ;
+
+  &.active {
+    background: #bbdefb;
     color: #212121;
     cursor: not-allowed;
   }
-  .input-files{
+
+  .input-files {
     width: 100%;
     height: 100%;
     position: absolute;
@@ -67,7 +70,8 @@ export const RoundedIcon = styled.div`
   color: #ccc;
   border-radius: 50px;
   border: 1px solid #ccc;
-  img{
+
+  img {
     width: 20px;
     height: 20px;
     opacity: 0.4;
@@ -75,7 +79,7 @@ export const RoundedIcon = styled.div`
 `;
 
 export const Style = styled.div`
-  .content{
+  .content {
     padding: 0;
     width: 100vw;
     direction: rtl;
@@ -97,12 +101,33 @@ export const Style = styled.div`
       background-color: darkgrey !important;
       outline: 1px solid slategrey !important;
     }
-    
-    
+
+
     //transform: rotate(-90deg);
     //transform-origin: right top
   }
-  
+
+  .drag-container {
+    overflow-Y: hidden;
+    overflow-x: auto;
+    height: 200px;
+    direction: rtl;
+    display: flex;
+  }
+
+  .drop-container {
+    direction: ltr;
+    float: right;
+  }
+
+`;
+
+
+export const ContentStyles = styled.div`
+  .container {
+    overflow: hidden;
+    padding: 100px 20px;
+  }
 `;
 
 export const SlideImg = styled.div`
@@ -110,14 +135,16 @@ export const SlideImg = styled.div`
   width: 150px;
   display: inline-block;
   overflow: hidden;
-  background-image: url(${props => props.theme.background});
+  background-image: url(${props => props.theme.background ? props.theme.background : './images/rango.jpg'});
   background-size: cover;
   position: relative;
   border-radius: 10px;
-  &:hover #hover{
+
+  &:hover #hover {
     display: flex;
   }
-  .slide-image{
+
+  .slide-image {
     width: 100%;
     height: 100%;
   }
