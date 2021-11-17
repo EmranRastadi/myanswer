@@ -1,1 +1,2 @@
-export {default as ContextComponent} from './ContextComponent/ContextComponent'
+export {default as StoreProvider} from './StoreProvider/StoreProvider'
+export {default as SwiperSlider} from './SwiperSlider/SwiperSlider'

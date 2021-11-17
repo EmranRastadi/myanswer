@@ -14,3 +14,8 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.rounded-icon{
+  width: 100px;
+  height: 100px;
+}

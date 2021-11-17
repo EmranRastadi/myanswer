@@ -1,11 +1,11 @@
-import type { NextPage } from 'next'
-import {ContextComponent} from "@organisms/index";
+import React from "react";
+import type {NextPage} from 'next'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Luncher} from "@templates/index";
 
 const Home: NextPage = () => {
   return (
-    <ContextComponent>
-
-    </ContextComponent>
+    <Luncher/>
   )
 }
 
